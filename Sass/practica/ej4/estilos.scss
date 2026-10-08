@@ -1,0 +1,25 @@
+// mixin para la direccion del flex
+@mixin flex-direccion($direccion) {
+  display: flex;
+  flex-direction: $direccion;
+}
+
+// mixin para el tamaño
+@mixin tamano($ancho, $alto) {
+  width: $ancho;
+  height: $alto;
+}
+
+.contenedor-fila {
+  @include flex-direccion(row);
+}
+
+.contenedor-columna {
+  @include flex-direccion(column);
+}
+
+.caja {
+  @include tamano(100px, 100px);
+  background-color: orange;
+  margin: 5px;
+}

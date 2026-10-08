@@ -1,0 +1,110 @@
+@import "variables";
+@import "mixins";
+@import "base";
+
+// cabecera
+header {
+  @include centrar;
+  background-color: $color-cabecera;
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h1 {
+    margin: 10px 0;
+  }
+
+  .boton {
+    background-color: $color-principal;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+
+    &:hover {
+      background-color: #43205f;
+    }
+  }
+}
+
+// productos
+.productos {
+  background-color: $color-productos;
+
+  .lista {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $espacio;
+  }
+}
+
+.producto {
+  background-color: white;
+  padding: $espacio;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+// herencia: los clientes usan el estilo de los productos
+.cliente {
+  @extend .producto;
+  font-style: italic;
+}
+
+// formulario
+.formulario {
+  background-color: $color-form;
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $espacio;
+
+    input, button {
+      @include estilo-form($color-inputs);
+      color: white;
+
+      &::placeholder {
+        color: #eee;
+      }
+
+      &:focus {
+        outline: none;
+        border: 3px solid $color-principal;
+        background-color: #c99ab3;
+      }
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+  }
+}
+
+// garantias
+.garantias {
+  @include centrar;
+  background-color: $color-garantias;
+}
+
+// testimonios
+.testimonios {
+  background-color: $color-testimonios;
+
+  .lista {
+    display: flex;
+    gap: $espacio;
+    justify-content: center;
+  }
+}
+
+// contacto
+footer {
+  @include centrar;
+  background-color: $color-contacto;
+}

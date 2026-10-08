@@ -1,0 +1,11 @@
+{
+  "name": "practica-sass",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "sass --no-source-map --silence-deprecation=import ej2:ej2 ej3:ej3 ej4:ej4 ej5:ej5 landing/scss/estilos.scss:landing/css/estilos.css",
+    "watch": "sass --no-source-map --silence-deprecation=import --watch ej2:ej2 ej3:ej3 ej4:ej4 ej5:ej5 landing/scss/estilos.scss:landing/css/estilos.css"
+  },
+  "devDependencies": {
+    "sass": "^1.80.0"
+  }
+}

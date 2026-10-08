@@ -1,0 +1,16 @@
+@import "variables";
+
+body {
+  background-color: $color-secundario;
+  color: black;
+  font-family: Arial;
+}
+
+h1 {
+  color: $color-primario;
+}
+
+h2 {
+  color: $color-secundario;
+  background-color: $color-primario;
+}

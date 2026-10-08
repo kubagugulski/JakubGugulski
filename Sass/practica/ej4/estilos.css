@@ -1,0 +1,16 @@
+.contenedor-fila {
+  display: flex;
+  flex-direction: row;
+}
+
+.contenedor-columna {
+  display: flex;
+  flex-direction: column;
+}
+
+.caja {
+  width: 100px;
+  height: 100px;
+  background-color: orange;
+  margin: 5px;
+}

@@ -1,0 +1,25 @@
+// mixin para los h2
+@mixin encabezado($color) {
+  color: $color;
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: $espacio;
+}
+
+// mixin para centrar contenido
+@mixin centrar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+// mixin para el formulario
+@mixin estilo-form($fondo) {
+  background-color: $fondo;
+  border: 1px solid #555;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 16px;
+}

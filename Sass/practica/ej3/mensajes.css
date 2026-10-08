@@ -1,0 +1,22 @@
+.mensaje-exito, .mensaje-error, .mensaje-info {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #333;
+}
+
+.mensaje-info {
+  background-color: lightblue;
+}
+
+.mensaje-error {
+  background-color: lightcoral;
+}
+.mensaje-error a {
+  font-weight: bold;
+}
+
+.mensaje-exito {
+  background-color: lightgreen;
+}

@@ -1,0 +1,19 @@
+// estilos comunes para todas las paginas
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: $fuente;
+  color: $color-texto;
+  background-color: #eee;
+}
+
+section, header, footer {
+  padding: $espacio * 2 $espacio;
+}
+
+h2 {
+  @include encabezado($color-principal);
+}

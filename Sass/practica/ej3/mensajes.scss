@@ -1,0 +1,20 @@
+@import "mensaje-base";
+
+.mensaje-info {
+  @extend %mensaje;
+  background-color: lightblue;
+}
+
+.mensaje-error {
+  @extend %mensaje;
+  background-color: lightcoral;
+
+  a {
+    font-weight: bold;
+  }
+}
+
+.mensaje-exito {
+  @extend %mensaje;
+  background-color: lightgreen;
+}

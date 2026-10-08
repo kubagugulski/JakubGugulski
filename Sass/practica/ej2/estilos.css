@@ -1,0 +1,14 @@
+body {
+  background-color: #ff9900;
+  color: black;
+  font-family: Arial;
+}
+
+h1 {
+  color: #3366cc;
+}
+
+h2 {
+  color: #ff9900;
+  background-color: #3366cc;
+}

@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #222;
+  background-color: #eee;
+}
+
+section, header, footer {
+  padding: 40px 20px;
+}
+
+h2 {
+  color: #5b2c83;
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #c5b4d6;
+}
+header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+header h1 {
+  margin: 10px 0;
+}
+header .boton {
+  background-color: #5b2c83;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+header .boton:hover {
+  background-color: #43205f;
+}
+
+.productos {
+  background-color: #d9d2e6;
+}
+.productos .lista {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.producto, .cliente {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.cliente {
+  font-style: italic;
+}
+
+.formulario {
+  background-color: #ecc8ee;
+}
+.formulario form {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.formulario form input, .formulario form button {
+  background-color: #b77e9c;
+  border: 1px solid #555;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 16px;
+  color: white;
+}
+.formulario form input::placeholder, .formulario form button::placeholder {
+  color: #eee;
+}
+.formulario form input:focus, .formulario form button:focus {
+  outline: none;
+  border: 3px solid #5b2c83;
+  background-color: #c99ab3;
+}
+.formulario form button {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.garantias {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #d4e1f1;
+}
+
+.testimonios {
+  background-color: #f2f2f2;
+}
+.testimonios .lista {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #e7dad6;
+}
