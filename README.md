@@ -5,3 +5,4 @@ Alumno: Jakub Gugulski (Erasmus)
 ## Prácticas
 
 - [Sass - Práctica 1 (ejercicios Sass + Landing Page)](Sass/practica/)
+-  [Web Components - Práctica 1](WebComponents/)

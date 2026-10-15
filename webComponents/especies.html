@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejercicio Web Components — Especies de Canarias</title>
+  <style>
+    /* ── Reset y base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f0f4f8;
+      color: #1a2a3a;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+      color: #1a4a2e;
+    }
+    .subtitulo {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Cuadrícula de tarjetas ───────────────────────── */
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🌿 Catálogo de Especies Endémicas de Canarias</h1>
+<p class="subtitulo">Ejercicio de Web Components — haz clic en una especie para ver el detalle</p>
+
+<!-- ════════════════════════════════════════════════════
+     PLANTILLA 1 — tarjeta compacta (vista catálogo)
+     ═══════════════════════════════════════════════════ -->
+<template id="tpl-especie-card">
+  <style>
+    :host {
+      display: block;
+      cursor: pointer;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      transition: transform .18s, box-shadow .18s;
+    }
+    :host(:hover) .card {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.14);
+    }
+    .card-icono {
+      font-size: 3rem;
+      text-align: center;
+      padding: 1.2rem 0 0.6rem;
+      background: linear-gradient(135deg, #d4f4dd, #a8d8b8);
+    }
+    .card-body { padding: 0.8rem 1rem 1rem; }
+    .card-nombre { font-weight: 700; font-size: 1rem; }
+    .card-cientifico {
+      font-style: italic;
+      font-size: 0.78rem;
+      color: #666;
+      margin: 0.1rem 0 0.5rem;
+    }
+    .card-isla {
+      display: inline-block;
+      font-size: 0.72rem;
+      background: #e8f5e9;
+      color: #2d6a4f;
+      border-radius: 20px;
+      padding: 0.15rem 0.6rem;
+    }
+    .card-amenaza {
+      float: right;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: 20px;
+    }
+    .amenaza-EN { background:#fce4ec; color:#b71c1c; }
+    .amenaza-VU { background:#fff3e0; color:#e65100; }
+    .amenaza-LC { background:#e8f5e9; color:#1b5e20; }
+  </style>
+
+  <div class="card">
+    <div class="card-icono">
+      <slot name="icono">🌱</slot>
+    </div>
+    <div class="card-body">
+      <div class="card-nombre"><slot name="nombre">Especie</slot></div>
+      <div class="card-cientifico"><slot name="cientifico"></slot></div>
+      <span class="card-isla"><slot name="isla">Canarias</slot></span>
+      <span class="card-amenaza" id="badge-amenaza"></span>
+    </div>
+  </div>
+</template>
+
+<!-- ════════════════════════════════════════════════════
+     PLANTILLA 2 — panel de detalle (vista expandida)
+     ═══════════════════════════════════════════════════ -->
+<template id="tpl-especie-detalle">
+  <style>
+    :host { display: block; }
+    .detalle {
+      background: white;
+      border-left: 4px solid #2d6a4f;
+      border-radius: 8px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1.5rem;
+      animation: aparecer .25s ease;
+    }
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .detalle-cab {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+    }
+    .detalle-icono { font-size: 2.4rem; }
+    .detalle-nombre { font-size: 1.2rem; font-weight: 700; }
+    .detalle-cientifico { font-style: italic; font-size: 0.85rem; color:#666; }
+    .detalle-desc { font-size: 0.9rem; line-height: 1.6; color:#333; }
+    .detalle-meta {
+      margin-top: 0.8rem;
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      background: #f0f4f8;
+      color: #333;
+    }
+    button.cerrar {
+      float: right;
+      background: none;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
+    button.cerrar:hover { background:#f5f5f5; }
+  </style>
+
+  <div class="detalle">
+    <button class="cerrar" id="btn-cerrar">✕ cerrar</button>
+    <div class="detalle-cab">
+      <span class="detalle-icono" id="d-icono"></span>
+      <div>
+        <div class="detalle-nombre" id="d-nombre"></div>
+        <div class="detalle-cientifico" id="d-cientifico"></div>
+      </div>
+    </div>
+    <p class="detalle-desc" id="d-desc"></p>
+    <div class="detalle-meta" id="d-meta"></div>
+    <!-- AÑADIDO: componente de valoraciones -->
+    <especie-valoracion id="d-valoracion" valoraciones="0"></especie-valoracion>
+  </div>
+</template>
+
+<!-- AÑADIDO: PLANTILLA 3 — valoraciones (boton like + contador) -->
+<template id="tpl-especie-valoracion">
+  <style>
+    :host { display: block; margin-top: 1rem; }
+    .valoracion {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    button {
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    button:hover { background: #1b4332; }
+    .numero { font-size: 0.9rem; color: #333; }
+  </style>
+  <div class="valoracion">
+    <button id="btn-like">👍 Me gusta</button>
+    <span class="numero" id="numero">0 valoraciones</span>
+  </div>
+</template>
+
+<!-- ════════════════════════════════════════════════════
+     CONTENIDO DE LA PÁGINA
+     ═══════════════════════════════════════════════════ -->
+
+<div id="detalle-contenedor"></div>
+
+<div class="catalogo" id="catalogo"></div>
+
+
+
+<!-- ════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────────────
+   DATOS — 6 especies endémicas de Canarias
+   ───────────────────────────────────────────────────── */
+const ESPECIES = [
+  {
+    id: 'drago',
+    icono: '🌳',
+    nombre: 'Drago canario',
+    cientifico: 'Dracaena draco',
+    isla: 'Tenerife · Gran Canaria',
+    amenaza: 'VU',
+    amenazaLabel: 'Vulnerable',
+    desc: 'El drago es el árbol símbolo de Canarias. Puede vivir miles de años y su savia rojiza —llamada "sangre de drago"— ha sido usada con fines medicinales desde la antigüedad. El ejemplar más famoso, el Drago Milenario de Icod de los Vinos, supera los 800 años.',
+    habitat: 'Bosque termófilo',
+    altura: 'hasta 20 m',
+    valoraciones: 0, // AÑADIDO
+  },
+  {
+    id: 'tajinaste',
+    icono: '🌺',
+    nombre: 'Tajinaste rojo',
+    cientifico: 'Echium wildpretii',
+    isla: 'Tenerife (Teide)',
+    amenaza: 'LC',
+    amenazaLabel: 'Preocupación menor',
+    desc: 'Planta bienal que alcanza los 3 metros de altura con una espiga cónica cubierta de flores rojo brillante. Crece exclusivamente en el Parque Nacional del Teide, entre los 2.000 y 3.500 m de altitud, y florece de mayo a junio.',
+    habitat: 'Alta montaña volcánica',
+    altura: 'hasta 3 m',
+    valoraciones: 0, // AÑADIDO
+  },
+  {
+    id: 'laurisilva',
+    icono: '🌿',
+    nombre: 'Til',
+    cientifico: 'Ocotea foetens',
+    isla: 'Tenerife · La Palma · La Gomera',
+    amenaza: 'LC',
+    amenazaLabel: 'Preocupación menor',
+    desc: 'Árbol predominante de la laurisilva macaronésica, bosque relicto del Terciario que sobrevivió a las glaciaciones gracias al clima canario. Sus hojas desprenden un olor fuerte al estrujarse. Puede superar los 40 m de altura en la laurisilva gomera.',
+    habitat: 'Laurisilva',
+    altura: 'hasta 40 m',
+    valoraciones: 0, // AÑADIDO
+  },
+  {
+    id: 'palomita',
+    icono: '🕊️',
+    nombre: 'Paloma rabiche',
+    cientifico: 'Columba junoniae',
+    isla: 'La Palma · La Gomera · Tenerife',
+    amenaza: 'VU',
+    amenazaLabel: 'Vulnerable',
+    desc: 'Ave endémica de las islas occidentales, ligada a la laurisilva. Se distingue por el blanco puro de su cola (de ahí "rabiche"). Su población ha descendido por la pérdida de bosques; actualmente está protegida y sus colonias se monitorizan anualmente.',
+    habitat: 'Laurisilva y pinar',
+    altura: '—',
+    valoraciones: 0, // AÑADIDO
+  },
+  {
+    id: 'lagarto',
+    icono: '🦎',
+    nombre: 'Lagarto gigante de El Hierro',
+    cientifico: 'Gallotia simonyi',
+    isla: 'El Hierro',
+    amenaza: 'EN',
+    amenazaLabel: 'En peligro',
+    desc: 'Considerado extinto durante décadas, fue redescubierto en 1974 en los acantilados de Fuga de Gorreta. Puede superar el metro de longitud. El Centro de Recuperación del Lagarto Gigante de El Hierro lleva un programa de cría en cautividad para reforzar la población silvestre.',
+    habitat: 'Acantilados y matorrales',
+    altura: 'hasta 120 cm',
+    valoraciones: 0, // AÑADIDO
+  },
+  {
+    id: 'cardón',
+    icono: '🌵',
+    nombre: 'Cardón canario',
+    cientifico: 'Euphorbia canariensis',
+    isla: 'Todas las islas',
+    amenaza: 'LC',
+    amenazaLabel: 'Preocupación menor',
+    desc: 'Suculenta arborescente que forma los llamados "cardones" o tabaibaes, ecosistema exclusivo canario. A pesar de su aspecto de cactus, no es un cactus: pertenece al género Euphorbia. Su látex es tóxico y fue usado históricamente para envenenar peces.',
+    habitat: 'Matorral costero y medianías',
+    altura: 'hasta 4 m',
+    valoraciones: 0, // AÑADIDO
+  },
+];
+
+
+/* ─────────────────────────────────────────────────────
+   COMPONENTE 1 — <especie-card>
+   Responsabilidad: mostrar la tarjeta compacta.
+
+   Guarda el objeto completo de la especie en this._especie
+   y lo pasa entero en el detalle del evento.
+
+   Evento que LANZA:
+   ① "especie-abierta" (CustomEvent que cruza el Shadow DOM)
+      → lleva el objeto especie completo en e.detail.especie
+      bubbles: true, composed: true — cruza el shadow boundary.
+   ───────────────────────────────────────────────────── */
+class EspecieCard extends HTMLElement {
+
+  /* Los atributos que queremos observar para reaccionar */
+  static get observedAttributes() {
+    return ['amenaza'];
+  }
+
+  constructor() {
+    super(); // SIEMPRE primero
+
+    // Creamos el Shadow DOM
+    this.attachShadow({ mode: 'open' });
+
+    // Clonamos la plantilla
+    const tpl = document.getElementById('tpl-especie-card');
+    const clone = tpl.content.cloneNode(true);
+    this.shadowRoot.appendChild(clone);
+
+    // Objeto especie completo — lo asigna la página al crear la card
+    this._especie = null;
+  }
+
+  connectedCallback() {
+    // Pintamos el badge de amenaza (necesitamos el atributo ya seteado)
+    this._actualizarAmenaza();
+
+    // ── Evento nativo: escuchamos click dentro del shadow ──
+    this.shadowRoot.querySelector('.card')
+      .addEventListener('click', () => this._alHacerClic());
+  }
+
+  attributeChangedCallback(nombre, anterior, nuevo) {
+    // Cada vez que cambie el atributo "amenaza", actualizamos el badge
+    if (nombre === 'amenaza') this._actualizarAmenaza();
+  }
+
+  _actualizarAmenaza() {
+    const badge   = this.shadowRoot.getElementById('badge-amenaza');
+    const amenaza = this.getAttribute('amenaza') ?? 'LC';
+    const labels  = { EN: 'En peligro', VU: 'Vulnerable', LC: 'Segura' };
+    badge.textContent = labels[amenaza] ?? amenaza;
+    badge.className   = `card-amenaza amenaza-${amenaza}`;
+  }
+
+  _alHacerClic() {
+    // ══ EVENTO — cruza el Shadow DOM y llega al documento ══════
+    // Pasa el objeto especie COMPLETO en e.detail.especie,
+    // así cualquier oyente tiene todos los datos sin buscar nada.
+    // bubbles: true  → sube por el árbol DOM
+    // composed: true → cruza el shadow boundary
+    this.dispatchEvent(new CustomEvent('especie-abierta', {
+      detail:   { especie: this._especie },
+      bubbles:  true,
+      composed: true
+    }));
+  }
+}
+
+customElements.define('especie-card', EspecieCard);
+
+
+/* ─────────────────────────────────────────────────────
+   AÑADIDO: COMPONENTE 3 — <especie-valoracion>
+   Muestra el numero de valoraciones y un boton like.
+   El numero viene en el atributo "valoraciones".
+   Al pulsar el boton lanza el evento "especie-valorada".
+   ───────────────────────────────────────────────────── */
+class EspecieValoracion extends HTMLElement {
+
+  static get observedAttributes() {
+    return ['valoraciones'];
+  }
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    const tpl = document.getElementById('tpl-especie-valoracion');
+    this.shadowRoot.appendChild(tpl.content.cloneNode(true));
+  }
+
+  connectedCallback() {
+    this._actualizar();
+
+    this.shadowRoot.getElementById('btn-like')
+      .addEventListener('click', () => {
+        this.dispatchEvent(new CustomEvent('especie-valorada', {
+          bubbles: true,
+          composed: true
+        }));
+      });
+  }
+
+  attributeChangedCallback(nombre, anterior, nuevo) {
+    if (anterior !== nuevo) this._actualizar();
+  }
+
+  _actualizar() {
+    const n = this.getAttribute('valoraciones') ?? 0;
+    this.shadowRoot.getElementById('numero').textContent =
+      n == 1 ? '1 valoración' : `${n} valoraciones`;
+  }
+}
+
+customElements.define('especie-valoracion', EspecieValoracion);
+
+
+/* ─────────────────────────────────────────────────────
+   COMPONENTE 2 — <especie-detalle>
+   Responsabilidad: mostrar el panel de detalle.
+
+   ★ OPCIÓN B — el componente se suscribe él solo al evento
+     "especie-abierta" en connectedCallback y se desuscribe
+     en disconnectedCallback. No necesita que nadie le llame
+     externamente; reacciona por sí mismo.
+
+     Equivale al patrón OnEnable / OnDisable de Unity:
+       connectedCallback    → OnEnable  (me conecto al "bus")
+       disconnectedCallback → OnDisable (me desconecto del "bus")
+
+   También lanza "especie-cerrada" al cerrarse.
+   ───────────────────────────────────────────────────── */
+class EspecieDetalle extends HTMLElement {
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+
+    const tpl = document.getElementById('tpl-especie-detalle');
+    this.shadowRoot.appendChild(tpl.content.cloneNode(true));
+
+    // Guardamos la referencia del handler para poder quitarlo luego
+    // (necesitamos la MISMA función en add y en remove)
+    this._onEspecieAbierta = e => {
+      this._mostrar(e.detail.especie);
+    };
+  }
+
+  connectedCallback() {
+    // ── Botón cerrar ──
+    this.shadowRoot.getElementById('btn-cerrar')
+      .addEventListener('click', () => this._cerrar());
+
+    // AÑADIDO: cuando se pulsa like, sumamos 1 a la especie que se esta mostrando
+    this.shadowRoot.addEventListener('especie-valorada', () => {
+      if (!this._especieActual) return;
+      this._especieActual.valoraciones++;
+      this.shadowRoot.getElementById('d-valoracion')
+        .setAttribute('valoraciones', this._especieActual.valoraciones);
+    });
+
+    // ★ Me suscribo al evento del documento: al activarme, empiezo a escuchar)
+    document.addEventListener('especie-abierta', this._onEspecieAbierta);
+  }
+
+  disconnectedCallback() {
+    // ★ Me desuscribo cuando me sacan del DOM: al desactivarme, dejo de escuchar)
+    document.removeEventListener('especie-abierta', this._onEspecieAbierta);
+  }
+
+  /* Método privado — rellena el shadow DOM con los datos de la especie */
+  _mostrar(especie) {
+    // AÑADIDO: guardamos la especie que se muestra y ponemos sus valoraciones
+    this._especieActual = especie;
+    this.shadowRoot.getElementById('d-valoracion')
+      .setAttribute('valoraciones', especie.valoraciones);
+
+    this.shadowRoot.getElementById('d-icono').textContent      = especie.icono;
+    this.shadowRoot.getElementById('d-nombre').textContent     = especie.nombre;
+    this.shadowRoot.getElementById('d-cientifico').textContent = especie.cientifico;
+    this.shadowRoot.getElementById('d-desc').textContent       = especie.desc;
+
+    const meta = this.shadowRoot.getElementById('d-meta');
+    meta.innerHTML = '';
+    [
+      `🏝 ${especie.isla}`,
+      `🌡 ${especie.amenazaLabel}`,
+      `🌲 ${especie.habitat}`,
+      `📏 ${especie.altura}`,
+    ].forEach(texto => {
+      const chip = document.createElement('span');
+      chip.className   = 'chip';
+      chip.textContent = texto;
+      meta.appendChild(chip);
+    });
+
+    this.style.display = 'block';
+  }
+
+  _cerrar() {
+    this.style.display = 'none';
+
+    // Evento que cruza el shadow DOM — avisa al documento de que se cerró
+    this.dispatchEvent(new CustomEvent('especie-cerrada', {
+      bubbles:  true,
+      composed: true
+    }));
+  }
+}
+
+customElements.define('especie-detalle', EspecieDetalle);
+
+
+/* ─────────────────────────────────────────────────────
+   PÁGINA — crea las tarjetas y el panel de detalle
+   ───────────────────────────────────────────────────── */
+
+// 1. Crear el componente de detalle y ocultarlo inicialmente.
+//    En cuanto se añade al DOM, su connectedCallback se suscribe
+//    solo a "especie-abierta" — la página no necesita hacer nada más.
+const panelDetalle = document.createElement('especie-detalle');
+panelDetalle.style.display = 'none';
+document.getElementById('detalle-contenedor').appendChild(panelDetalle);
+
+// 2. Crear una tarjeta por cada especie
+const catalogo = document.getElementById('catalogo');
+
+ESPECIES.forEach(esp => {
+  const card = document.createElement('especie-card');
+  card.setAttribute('amenaza', esp.amenaza);
+
+  // ★ Guardamos el objeto completo en la propiedad del componente.
+  //   Así _alHacerClic() puede pasarlo entero en el evento,
+  //   sin necesidad de buscar por id.
+  card._especie = esp;
+
+  // Slots — contenido que entra en la plantilla vía <slot>
+  card.innerHTML = `
+    <span slot="icono">${esp.icono}</span>
+    <span slot="nombre">${esp.nombre}</span>
+    <span slot="cientifico">${esp.cientifico}</span>
+    <span slot="isla">${esp.isla}</span>
+  `;
+
+  catalogo.appendChild(card);
+});
+
+// 3. Escuchar el cierre (opcional — para reaccionar desde la página si hiciera falta)
+document.addEventListener('especie-cerrada', () => {
+  // nada por ahora; el panel ya se oculta él solo en _cerrar()
+});
+
+
+</script>
+</body>
+</html>
