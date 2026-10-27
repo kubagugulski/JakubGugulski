@@ -1,0 +1,20 @@
+---
+const { nivel = 'LC' } = Astro.props;
+
+const etiquetas = { EN: 'En peligro', VU: 'Vulnerable', LC: 'Segura' };
+const texto = etiquetas[nivel];
+const clases = 'badge amenaza-' + nivel;
+---
+<span class={clases}>{texto}</span>
+
+<style>
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+  }
+  .amenaza-EN { background: #fce4ec; color: #b71c1c; }
+  .amenaza-VU { background: #fff3e0; color: #e65100; }
+  .amenaza-LC { background: #e8f5e9; color: #1b5e20; }
+</style>

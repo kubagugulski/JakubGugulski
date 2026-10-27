@@ -1,0 +1,39 @@
+---
+import Tarjeta from './Tarjeta.astro';
+import BadgeAmenaza from './BadgeAmenaza.astro';
+
+const { especie } = Astro.props;
+---
+<Tarjeta href={`/especies/${especie.id}/`}>  <Fragment slot="icono">{especie.icono}</Fragment>
+  <Fragment slot="titulo">{especie.nombre}</Fragment>
+
+  <!-- sin slot: va al slot por defecto -->
+  <p class="cientifico">{especie.cientifico}</p>
+  <div class="pie">
+    <span class="isla">{especie.isla}</span>
+    <BadgeAmenaza nivel={especie.amenaza} />
+  </div>
+</Tarjeta>
+
+<style>
+  .cientifico {
+    font-style: italic;
+    font-size: 0.78rem;
+    color: #666;
+    margin: 0.1rem 0 0.5rem;
+  }
+  .pie {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .isla {
+    font-size: 0.72rem;
+    background: #e8f5e9;
+    color: #2d6a4f;
+    border-radius: 20px;
+    padding: 0.15rem 0.6rem;
+  }
+</style>

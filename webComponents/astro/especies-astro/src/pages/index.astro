@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EspecieCard from '../components/EspecieCard.astro';
+import { ESPECIES } from '../data/especies.js';
+---
+<BaseLayout titulo="Catálogo">
+  <h1>Catálogo de Especies Endémicas de Canarias</h1>
+
+  <div class="catalogo">
+    {ESPECIES.map((especie) => <EspecieCard especie={especie} />)}
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: 1.5rem;
+    color: #1a4a2e;
+  }
+  .catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+</style>

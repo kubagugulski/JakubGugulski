@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BadgeAmenaza from '../../components/BadgeAmenaza.astro';
+import { ESPECIES } from '../../data/especies.js';
+import Chip from '../../components/Chip.astro';
+
+export function getStaticPaths() {
+  return ESPECIES.map((especie) => ({
+    params: { id: especie.id },   // lo que sustituye a [id] en la URL
+    props: { especie },           // los datos que recibe esa página
+  }));
+}
+
+const { especie } = Astro.props;
+---
+<BaseLayout titulo={especie.nombre}>
+<nav slot="migas" class="migas">
+  <a href="/">Catálogo</a> › {especie.nombre}
+</nav>
+  <article class="ficha">
+    <div class="ficha-cab">
+      <span class="ficha-icono">{especie.icono}</span>
+      <div>
+        <h1>{especie.nombre}</h1>
+        <p class="cientifico">{especie.cientifico}</p>
+      </div>
+      <BadgeAmenaza nivel={especie.amenaza} />
+    </div>
+
+    <p class="desc">{especie.desc}</p>
+
+    <div class="datos">
+        <Chip>🏝 {especie.isla}</Chip>
+        <Chip>🌲 {especie.habitat}</Chip>
+        <Chip>📏 {especie.altura}</Chip>
+    </div>
+
+    <a class="volver" href="/">← Volver al catálogo</a>
+  </article>
+</BaseLayout>
+
+<style>
+  .ficha {
+    background: white;
+    border-left: 4px solid #2d6a4f;
+    border-radius: 8px;
+    padding: 1.4rem 1.6rem;
+    max-width: 800px;
+  }
+  .ficha-cab {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .ficha-icono { font-size: 3rem; }
+  h1 { font-size: 1.4rem; }
+  .cientifico { font-style: italic; color: #666; }
+  .desc { line-height: 1.6; color: #333; }
+  .datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+.migas {
+  color: #d4f4dd;
+  font-size: 0.9rem;
+}
+.migas a {
+  color: white;
+}
+  .volver { color: #2d6a4f; font-weight: 600; text-decoration: none; }
+  .volver:hover { text-decoration: underline; }
+</style>

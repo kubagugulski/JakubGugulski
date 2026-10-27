@@ -1,0 +1,61 @@
+---
+const { titulo } = Astro.props;
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{titulo} · Especies de Canarias</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">🌿 Especies de Canarias</a>
+      <slot name="migas" />
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <p>Jakub Gugulski · Tecnologías Web: Cliente</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f0f4f8;
+    color: #1a2a3a;
+  }
+
+  main {
+    padding: 2rem;
+    min-height: 70vh;
+  }
+</style>
+
+<style>
+  header {
+    background: #2d6a4f;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: #666;
+  }
+</style>
